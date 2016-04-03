@@ -68,6 +68,10 @@ class DashboardInstallCommand extends Command
         $_uploadImage = @file_get_contents($TEMPLATES_PATH . '/class_upload_image.php');
         $_uploadImage = str_replace("__MODULE__", $this->moduleName, $_uploadImage);
 
+        // QueryData
+        $_queryData = @file_get_contents($TEMPLATES_PATH . '/class_query_data.php');
+        $_queryData = str_replace("__MODULE__", $this->moduleName, $_queryData);
+
         // auth controller
         $_authController = @file_get_contents($TEMPLATES_PATH . '/controllers/class_auth.php');
         $_authController = str_replace("__MODULE__", $this->moduleName, $_authController);
@@ -125,6 +129,10 @@ class DashboardInstallCommand extends Command
             // Upload Image
             $fp = @fopen($DASHBOARD_PATH . '/UploadImage.php', "w+");
             @fwrite($fp, $_uploadImage);
+            @fclose($fp);
+            // QueryData
+            $fp = @fopen($DASHBOARD_PATH . '/QueryData.php', "w+");
+            @fwrite($fp, $_queryData);
             @fclose($fp);
             // Create Dir Model
             @mkdir($DASHBOARD_PATH . '/Model', 0755);

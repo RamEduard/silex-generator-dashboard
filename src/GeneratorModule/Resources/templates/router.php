@@ -7,6 +7,16 @@
  */
 
 /**
+ * List JSON route
+ */
+$app->match('/admin/__TABLENAME__/list', '__CONTROLLER__::listJson');
+
+/**
+ * Download route
+ */
+$app->match('/admin/__TABLENAME__/download', '__CONTROLLER__::download');
+
+/**
  * List route
  */
 $app->get('/admin/__TABLENAME__', '__CONTROLLER__::index')

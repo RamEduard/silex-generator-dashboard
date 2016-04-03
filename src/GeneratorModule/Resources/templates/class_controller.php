@@ -3,6 +3,7 @@
 namespace __MODULE__\Controller;
 
 use App;
+use __MODULE__\QueryData;
 use __MODULE__\Model\__CLASSNAME__;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,127 @@ class __CLASSNAME__Controller
 {
 
 	/**
+     * List JSON __CLASSNAME__ action
+     * 
+     * @param Request $request
+     * @param App $app
+     * @return Response
+     */
+	function listJson(Request $request, App $app)
+	{
+		$start = 0;
+	    $vars = $request->query->all();
+	    $qsStart = (int)$vars["start"];
+	    $search = $vars["search"];
+	    $order = $vars["order"];
+	    $columns = $vars["columns"];
+	    $qsLength = (int)$vars["length"];    
+	    
+	    if($qsStart) {
+	        $start = $qsStart;
+	    }    
+		
+	    $index = $start;   
+	    $rowsPerPage = $qsLength;
+	       
+	    $rows = array();
+	    
+	    $searchValue = $search['value'];
+	    $orderValue = $order[0];
+	    
+	    $orderClause = "";
+	    if($orderValue) {
+	        $orderClause = " ORDER BY ". $columns[(int)$orderValue['column']]['data'] . " " . $orderValue['dir'];
+	    }
+	    
+	    $table_columns = array(
+	__TABLECOLUMNS_ARRAY__
+	    );
+	    
+	    $table_columns_type = array(
+	__TABLECOLUMNS_TYPE_ARRAY__
+	    );    
+	    
+	    $whereClause = "";
+	    
+	    $i = 0;
+	    foreach($table_columns as $col){
+	        
+	        if ($i == 0) {
+	           $whereClause = " WHERE";
+	        }
+	        
+	        if ($i > 0) {
+	            $whereClause =  $whereClause . " OR"; 
+	        }
+	        
+	        $whereClause =  $whereClause . " " . $col . " LIKE '%". $searchValue ."%'";
+	        
+	        $i = $i + 1;
+	    }
+	    
+	    $recordsTotal = $app['db']->executeQuery("SELECT * FROM `__TABLENAME__`" . $whereClause . $orderClause)->rowCount();
+	    
+	    $find_sql = "SELECT * FROM `__TABLENAME__`". $whereClause . $orderClause . " LIMIT ". $index . "," . $rowsPerPage;
+	    $rows_sql = $app['db']->fetchAll($find_sql, array());
+
+	    foreach($rows_sql as $row_key => $row_sql){
+	        for($i = 0; $i < count($table_columns); $i++){
+
+	__EXTERNALS_FOR_LIST__
+
+	        }
+	    }    
+	    
+	    $queryData = new QueryData();
+	    $queryData->start = $start;
+	    $queryData->recordsTotal = $recordsTotal;
+	    $queryData->recordsFiltered = $recordsTotal;
+	    $queryData->data = $rows;
+	    
+	    return new Response(json_encode($queryData), 200);
+	}
+
+	/**
+     * Download __CLASSNAME__ action
+     * 
+     * @param Request $request
+     * @param App $app
+     */
+	function download(Request $request, App $app)
+	{
+		// menu
+	    $rowid = $request->get('id');
+	    $idfldname = $request->get('idfld');
+	    $fieldname = $request->get('fldname');
+	    
+	    if( !$rowid || !$fieldname ) die("Invalid data");
+	    
+	    $find_sql = "SELECT " . $fieldname . " FROM " . __TABLENAME__ . " WHERE ".$idfldname." = ?";
+	    $row_sql = $app['db']->fetchAssoc($find_sql, array($rowid));
+
+	    if(!$row_sql){
+	        $app['session']->getFlashBag()->add(
+	            'danger',
+	            array(
+	                'message' => 'Row not found!',
+	            )
+	        );        
+	        return $app->redirect($app['url_generator']->generate('menu_list'));
+	    }
+
+	    header('Content-Description: File Transfer');
+	    header('Content-Type: image/jpeg');
+	    header("Content-length: ".strlen( $row_sql[$fieldname] ));
+	    header('Expires: 0');
+	    header('Cache-Control: public');
+	    header('Pragma: public');
+	    ob_clean();    
+	    echo $row_sql[$fieldname];
+	    exit();
+	}
+
+	/**
      * List __CLASSNAME__ action
      * 
      * @param App $app
@@ -29,22 +151,11 @@ class __CLASSNAME__Controller
 	__TABLECOLUMNS_ARRAY__
 	    );
 
-	    $primary_key = "__TABLE_PRIMARYKEY__";
-		$rows = array();
-
-	    $find_sql = "SELECT * FROM `__TABLENAME__`";
-	    $rows_sql = $app['db']->fetchAll($find_sql, array());
-
-	    foreach ($rows_sql as $row_key => $row_sql) {
-            for ($i = 0; $i < count($table_columns); $i++) {
-                $rows[$row_key][$table_columns[$i]] = $row_sql[$table_columns[$i]];
-            }
-        }
+	    $primary_key = "__TABLE_PRIMARYKEY__";	
 
 	    return $app['twig']->render('__TABLENAME__/list.html.twig', array(
 	    	"table_columns" => $table_columns,
-	        "primary_key" => $primary_key,
-	    	"rows" => $rows
+	        "primary_key" => $primary_key
 	    ));
     }
     

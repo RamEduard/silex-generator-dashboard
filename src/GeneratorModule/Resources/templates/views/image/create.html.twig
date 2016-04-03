@@ -1,0 +1,168 @@
+{% extends 'ag_base/backend.html.twig' %}
+
+{% block body_params %}class="skin-blue"{% endblock %}
+
+
+{% block container %}
+
+    <div class="wrapper row-offcanvas row-offcanvas-left">
+
+        {% include 'menu.html.twig' with {'option': 'imagen_create'} %}
+
+        <!-- Right side column. Contains the navbar and content of the page -->
+        <aside class="right-side">                
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    Subir imágenes
+                </h1>
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+
+                {% include 'ag_alerts.html.twig' %}
+
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div class="box box-info">
+                            <div class="box-header">
+                                <h3 class="box-title"></h3>
+                            </div><!-- /.box-header -->
+                            <div class="box-body">
+
+                                <div class="row" id="dropbox">
+                                    <span class="message">Arrastra las imágenes para subir. <br /><i>Luego de arrastralas se subirán al servidor automáticamente</i></span>
+                                </div>
+
+                            </div><!-- /.box-body -->
+
+
+                            <div class="box-footer">
+                                <button type="button" class="btn btn-default" onclick="location.href='{{ path("imagen_list") }}'">Volver</button>
+                            </div>
+
+                        </div><!-- /.box -->
+
+
+                    </div>
+                </div>
+
+            </section><!-- /.content -->
+        </aside><!-- /.right-side -->
+    </div><!-- ./wrapper -->
+
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ app.asset_path }}/css/filedrop/filedrop.css" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ app.asset_path }}/js/plugins/filedrop/jquery.filedrop.js"></script>
+    <script>
+        $(function(){
+
+            var dropbox = $('#dropbox'),
+                    message = $('.message', dropbox);
+
+            dropbox.filedrop({
+                // The name of the $_FILES entry:
+                paramname:'image',
+
+                maxfiles: 5,
+                maxfilesize: 2,
+                url: 'create',
+
+                uploadFinished:function(i,file,response){
+                    $.data(file).addClass('done');
+                    // response is the JSON object that post_file.php returns
+                },
+
+                error: function(err, file) {
+                    switch(err) {
+                        case 'BrowserNotSupported':
+                            showMessage('Your browser does not support HTML5 file uploads!');
+                            break;
+                        case 'TooManyFiles':
+                            alert('Too many files! Please select 5 at most! (configurable)');
+                            break;
+                        case 'FileTooLarge':
+                            alert(file.name+' is too large! Please upload files up to 2mb (configurable).');
+                            break;
+                        default:
+                            break;
+                    }
+                },
+
+                // Called before each upload is started
+                beforeEach: function(file){
+                    if(!file.type.match(/^image\//)){
+                        alert('Only images are allowed!');
+
+                        // Returning false will cause the
+                        // file to be rejected
+                        return false;
+                    }
+                },
+
+                uploadStarted:function(i, file, len){
+                    createImage(file);
+                },
+
+                progressUpdated: function(i, file, progress) {
+                    $.data(file).find('.progress').width(progress);
+                }
+
+            });
+
+            var template = '<div class="preview col-12 col-md-3 col-lg-3">'+
+                    '<span class="imageHolder">'+
+                    '<img />'+
+                    '<span class="uploaded"></span>'+
+                    '</span>'+
+                    '<div class="progressHolder">'+
+                    '<div class="progress"></div>'+
+                    '</div>'+
+                    '</div>';
+
+
+            function createImage(file){
+
+                var preview = $(template),
+                        image = $('img', preview);
+
+                var reader = new FileReader();
+
+                image.width = 100;
+                image.height = 100;
+
+                reader.onload = function(e){
+
+                    // e.target.result holds the DataURL which
+                    // can be used as a source of the image:
+
+                    image.attr('src',e.target.result);
+                };
+
+                // Reading the file as a DataURL. When finished,
+                // this will trigger the onload function above:
+                reader.readAsDataURL(file);
+
+                message.hide();
+                preview.appendTo(dropbox);
+
+                // Associating a preview container
+                // with the file, using jQuery's $.data():
+
+                $.data(file,preview);
+            }
+
+            function showMessage(msg){
+                message.html(msg);
+            }
+
+        });
+    </script>
+{% endblock %}

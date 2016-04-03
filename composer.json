@@ -1,0 +1,33 @@
+{
+    "name": "rameduard/silex-generator-dashboard",
+    "type": "library",
+    "description": "Silex Generator Dashboard",
+    "license": "GPL",
+    "keywords": ["generator", "dashboard", "bootstrap", "admin-lte"],
+    "authors": [
+        {
+            "name": "Ramón Serrano",
+            "email": "ramon.calle.88@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "silex/silex": "1.2.4",
+        "simple-php-mvc/simple-php-mvc": "1.6.4",
+        "symfony/security": "~2.6",
+        "swiftmailer/swiftmailer": "~5.4",
+        "twig/twig": "~1.18",
+        "symfony/twig-bridge": "~2.6",
+        "symfony/form": "~2.6",
+        "symfony/validator": "~2.6",
+        "symfony/config": "~2.6",
+        "symfony/translation": "~2.6",
+        "symfony/security-csrf": "~2.6"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        }
+    }
+}

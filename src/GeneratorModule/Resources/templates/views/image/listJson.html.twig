@@ -1,0 +1,16 @@
+<div class="row">
+    <select class="image-picker show-html">
+        <option value=""></option>
+        {% for image in images %}
+            <option data-img-src="{{ image.link }}" value="{{ image.id }}" data-img-height="136" data-container-width="200" data-container-height="150">{{ image.nombre }}</option>
+            {#<div class="panel col-12 col-md-3 col-lg-3">
+                <div class="panel-body">
+                    <h4>{{ image.nombre }}</h4>
+                    <br/>
+                    <img class="img-responsive" src="{{ image.link }}">
+                    <br/>
+                </div>
+            </div>#}
+        {% endfor %}
+    </select>
+</div>

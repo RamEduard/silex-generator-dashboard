@@ -1,0 +1,27 @@
+.navbar .nav > li > a:hover, 
+.navbar .nav > li > a:active, 
+.navbar .nav > li > a:focus, 
+.navbar .nav > li > a.active,
+.navbar .nav .open > a, 
+.navbar .nav .open > a:hover, 
+.navbar .nav .open > a:focus,
+.navbar .nav .open > a.active {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 768px) {
+    .navbar-nav.navbar-right:last-child {
+        margin-right: 0px;
+    }
+    .navbar-nav.navbar-right li > a {
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+}
+
+@media (max-width: 767px) {
+    .nav.pull-left {
+        background-color: #3C8DBC;
+        text-align: center;
+    }
+}

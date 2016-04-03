@@ -1,0 +1,65 @@
+{% extends "layout.twig" %}
+
+{% block menu %} 
+    {% include 'includes/menu.twig' with {'option': 'home'} %}
+{% endblock %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+    <h1 class="page-header"></h1>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+
+                    <h4>Thank you for using the CRUD Admin Generator!</h4>
+
+                    <p>To generate the CRUD, you first need to edit the file <b>/app/config/providers.php</b> with the connection data to your database on line <b>69</b>.</p>
+
+                    <pre>
+...
+'dbs.options' => array(
+    'db' => array(
+        'driver'   => 'pdo_mysql',
+        'dbname'   => 'DBNAME',
+        'host'     => 'HOST',
+        'user'     => 'USER',
+        'password' => 'PASSWORD',
+        'charset'  => 'utf8'
+    )
+)
+...
+                    </pre>
+
+                    <p>Then you just need to run the following command: <br />
+
+                    <strong>php console generate:dashboard:install</strong><br />
+                    </p>
+
+                    <h4>Login</h4>
+
+                    <p>Import the <b>sql/db.sql</b> for enable the login. Without this <a href="./login">Login</a> don´t works.</p>
+
+                    <ul>
+                        <li>
+                            <b><u>Programador:</u></b> programador:admin
+                        </li>
+                        <li>
+                            <b><u>Administrador:</u></b> administrador:admin
+                        </li>
+                        <li>
+                            <b><u>Usuario:</u></b> usuario:admin
+                        </li>
+                    </ul>
+
+                    <h4>Author</h4>                
+                    <p><strong>Ramon Serrano</strong><br />
+                    <strong>Email:</strong> <a href="mailto:ramon.calle.88@gmail.com">ramon.calle.88@gmail.com</a><br />
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

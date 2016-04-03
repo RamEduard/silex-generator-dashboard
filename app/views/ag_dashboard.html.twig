@@ -1,0 +1,101 @@
+{% extends 'ag_base/backend.html.twig' %}
+
+{% block body_params %}class="skin-blue"{% endblock %}
+
+{% block container %}
+
+    <div class="wrapper row-offcanvas row-offcanvas-left">
+
+        {% include 'menu.html.twig' with {'option': 'dasboard'} %}
+
+        <!-- Right side column. Contains the navbar and content of the page -->
+        <aside class="right-side">                
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    Administración de Uniformes Escolares Bodeven
+                </h1>
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="box">
+                            <div class="box-body">
+
+                                <h4>Este es el administrador de la pagina de Uniformes Escolares Bodeven</h4>
+
+                                <br />
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="light-well">
+                                            <h4>Productos</h4>
+                                            <div class="data">
+                                                <a href="{{ path('products_list') }}">
+                                                    <h1>{{ numProd }}</h1>
+                                                </a><hr>
+                                                <a class="btn btn-success" href="{{ path('products_create') }}">Nuevo producto</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="light-well">
+                                            <h4>Proveedores</h4>
+                                            <div class="data">
+                                                <a href="{{ path('providers_list') }}">
+                                                    <h1>{{ numProv }}</h1>
+                                                </a><hr>
+                                                <a class="btn btn-success" href="{{ path('providers_create') }}">Nuevo proveedor</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="light-well">
+                                            <h4>Categorías</h4>
+                                            <div class="data">
+                                                <a href="{{ path('categories_list') }}">
+                                                    <h1>{{ numCat }}</h1>
+                                                </a><hr>
+                                                <a class="btn btn-success" href="{{ path('categories_create') }}">Nueva categoría</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if is_granted('ROLE_Programador') %}
+                                        <div class="col-sm-3">
+                                            <div class="light-well">
+                                                <h4>Imágenes</h4>
+                                                <div class="data">
+                                                    <a href="{{ path('imagen_list') }}">
+                                                        <h1>{{ numImag }}</h1>
+                                                    </a><hr>
+                                                    <a class="btn btn-success" href="{{ path('imagen_create') }}">Nueva imagen</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="light-well">
+                                                <h4>Usuarios</h4>
+                                                <div class="data">
+                                                    <a href="{{ path('users_list') }}">
+                                                        <h1>{{ numUsers }}</h1>
+                                                    </a><hr>
+                                                    <a class="btn btn-success" href="{{ path('users_create') }}">Nuevo usuario</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section><!-- /.content -->
+        </aside><!-- /.right-side -->
+    </div><!-- ./wrapper -->
+
+{% endblock %}

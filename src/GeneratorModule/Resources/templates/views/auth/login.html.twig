@@ -1,0 +1,69 @@
+{% extends 'layout.twig' %}
+
+{% block title %}Inicio de sesión{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .checkbox {
+            margin-left: 20px;
+        }
+        #container_form {
+            -webkit-box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+            -moz-box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+            z-index: 2300;
+            margin-top: 20px;
+            padding: 16px;
+        }
+    </style>
+{% endblock %}
+
+{% block body_params %}class="skin-blue" id="login"{% endblock %}
+
+{% block container %}
+	<div class="wrapper row-offcanvas row-offcanvas-left">
+	    <div class="container">
+            <div class="col-12 col-md-4 col-md-push-4 col-sm-4 col-sm-push-4 col-lg-4 col-lg-push-4" id="container_form">
+                <form class="form-signin" action="{{ path('login_check') }}" method="post">
+                    <h2 class="form-signin-heading" style="text-align: center">Iniciar sesión</h2>
+                    {% if error != null %}
+                      <div class="callout callout-danger">
+                        <button type="button" class="close" onclick="$('.callout').fadeOut(2000)">×</button>
+                        <h4>Error</h4>
+                        <p>{{ error }}</p>
+                      </div>
+                    {% endif %}
+                    <div class=" input-group">
+                        <span class="input-group-addon glyphicon glyphicon-user"></span>
+                        <input type="text"
+                               class="form-control"
+                               id="_username"
+                               name="_username"
+                               value="{{ last_username }}"
+                               placeholder="Usuario o Correo"
+                               required autofocus>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                        <input type="password"
+                               class="form-control"
+                               id="_password"
+                               name="_password"
+                               placeholder="Clave"
+                               required>
+                    </div>
+                    <label class="checkbox">
+                        <input type="checkbox"
+                               id="recordarme"
+                               name="recordarme" value=1 > Mantenerme conectado
+                    </label>
+                    <div>
+                        <button class="btn btn-large btn-primary" type="submit">Iniciar sesión</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

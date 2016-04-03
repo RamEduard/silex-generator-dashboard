@@ -1,0 +1,19 @@
+{% extends 'ag_menu.html.twig' %}
+
+{% block menu %}
+	
+	{% if is_granted('ROLE_Programador') %}
+                
+    {% endif %}
+
+    {% if is_granted('ROLE_Administrador') %}
+        
+    {% endif %}
+
+    {% if is_granted('ROLE_Administrador') %}
+        
+    {% endif %}
+
+	__MENU_OPTIONS__
+
+{% endblock %}

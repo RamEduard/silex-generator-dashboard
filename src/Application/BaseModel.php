@@ -32,7 +32,7 @@ class BaseModel
     protected $_connection;
 
     /**
-     * @var array Arreglo de errores comunes de Doctrine DBAL
+     * @var array Arreglo de errores comunes de DoctrineORM DBAL
      */
     protected $_errors = array(
         'HY093' => 'Parámetros no dados.',
@@ -160,8 +160,8 @@ class BaseModel
      * @param string $sql     Consulta SQL a la base de datos
      * @param array $criteria Criterios de la consulta SQL adoptados en el WHERE
      *
-     * @return Statement Retorna el objeto de Doctrine Statement
-     * @throws DBALException Error de Doctrine
+     * @return Statement Retorna el objeto de DoctrineORM Statement
+     * @throws DBALException Error de DoctrineORM
      * @throws Exception Error en el SQL
      */
     protected function _query($sql = "", array $criteria = array())

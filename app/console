@@ -4,6 +4,7 @@
 $loader = require __DIR__ . '/autoload.php';
 
 use ConsoleSymfonyCommandsModule\ConsoleStore;
+use DoctrineOrm\ConfigConsole;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 
@@ -16,6 +17,8 @@ $app = new App(array('debug'=> $debug));
 ConsoleStore::store('app', $app);
 
 $console = new Application('Silex Shop Catalog Application', '1.0');
+
+ConfigConsole::setConsole($console, $app['orm.em']);
 
 foreach ($app->setModules() as $module) {
     $module->registerCommands($console);

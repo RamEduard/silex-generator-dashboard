@@ -40,9 +40,28 @@ class DoctrineServiceProvider implements ServiceProviderInterface
             'proxy_dir'    => null
         );
 
+        $app['orm.options.initializer'] = $app->protect(function () use ($app) {
+            static $initialized = false;
+
+            if ($initialized) {
+                return;
+            }
+
+            $initialized = true;
+
+            $tmp = array();
+
+            foreach ($app['orm.default_options'] as $name => $option) {
+                $tmp[$name] = (isset($app[$name])) ? $app[$name] : $option;
+            }
+
+            $app['orm.options'] = $tmp;
+        });
+
         // ORM
         $app['orm.em'] = $app->share(function($app) {
-            $options = $app['orm.default_options'];
+            $app['orm.options.initializer']();
+            $options = $app['orm.options'];
 
             if (empty($options['path_entities']) || !is_array($options['path_entities'])) {
                 throw new \Exception('Option path_entities should be an array of path files entities.');

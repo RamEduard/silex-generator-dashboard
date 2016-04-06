@@ -22,7 +22,8 @@
         "symfony/validator": "~2.6",
         "symfony/config": "~2.6",
         "symfony/translation": "~2.6",
-        "symfony/security-csrf": "~2.6"
+        "symfony/security-csrf": "~2.6",
+        "doctrine/orm": "2.3.6"
     },
     "minimum-stability": "dev",
     "autoload": {

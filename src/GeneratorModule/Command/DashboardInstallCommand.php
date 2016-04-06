@@ -6,7 +6,6 @@ use ConsoleSymfonyCommandsModule\ConsoleStore;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -449,9 +448,8 @@ class DashboardInstallCommand extends Command
     
     /**
      * Get tables from database
-     * 
-     * @param string $sourceDir
-     * @param string $destinyDir
+     *
+     * @param $app
      * @return array $tables
      */
     protected function getArrayTables($app)

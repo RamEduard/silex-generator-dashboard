@@ -56,7 +56,14 @@ class DoctrineServiceProvider implements ServiceProviderInterface
                 $config = Setup::createXMLMetadataConfiguration($options['path_entities'], $options['dev_mode'], $options['proxy_dir']);
             }
 
-            return EntityManager::create($app['db'], $config);
+            if (isset($app['db'])) {
+                $entityManager = EntityManager::create($app['db'], $config);
+            } else {
+                $entityManager = EntityManager::create($options['params'], $config);
+                $app['db'] = $entityManager->getConnection();
+            }
+
+            return $entityManager;
         });
     }
 

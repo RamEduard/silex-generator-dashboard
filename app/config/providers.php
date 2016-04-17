@@ -78,6 +78,23 @@ return array(
             )
         )
     )),
+    'orm' => array( new DoctrineORM\Provider\DoctrineServiceProvider(), array(
+        'params'       => array(
+            'charset'  => null,
+            'driver'   => 'pdo_mysql',
+            'dbname'   => null,
+            'host'     => 'localhost',
+            'user'     => 'root',
+            'password' => '',
+            'port'     => null,
+        ),
+        'dev_mode'     => false,
+        'etities_type' => 'annotations',
+        'path_entities' => array(
+            __DIR__ . '/../../Application/Entity'
+        ),
+        'proxy_dir'    => null
+    )),
     'swiftmailer' => array(new Silex\Provider\SwiftmailerServiceProvider(), array(
         'swiftmailer.options' => array(
             'host' => 'smtp.gmail.com',

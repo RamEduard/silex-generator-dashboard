@@ -3,6 +3,7 @@
 namespace __MODULE__\Controller;
 
 use App;
+use __MODULE__\Model\__CLASSNAME__;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,9 +60,17 @@ class __CLASSNAME__Controller
      */
     function index(App $app)
     {
-        $rows = array();
+        if (isset($app['db'])) {
+            $db = $app['db'];
+        } else if (isset($app['orm.em'])) {
+            $db = $app['orm.em']->getConnection();
+        } else {
+            throw new Exception("DB connection not found");
+        }
 
-	    return new JsonResponse($rows,200);
+        $rows = __CLASSNAME__::getInstance($db)->getAll();
+
+        return new JsonResponse($rows,200);
     }
     
     /**
@@ -72,12 +81,29 @@ class __CLASSNAME__Controller
      */
     function create(App $app)
     {
-    	if("POST" == $app['request']->getMethod()){
+        if (isset($app['db'])) {
+            $db = $app['db'];
+        } else if (isset($app['orm.em'])) {
+            $db = $app['orm.em']->getConnection();
+        } else {
+            throw new Exception("DB connection not found");
+        }
 
-			return new JsonResponse(array('inserted' => true), 200);	        
+    	if("POST" == $app['request']->getMethod()) {
+            // Data
+            $data = $app['request']->request->all();
+
+            // Affected rows
+            $affectedRows = __CLASSNAME__::getInstance($db)->insert($data);
+
+			return new JsonResponse(array(
+                'inserted' => ($affectedRows > 0)
+                ), 200);
 	    }
 	    
-	    return new JsonResponse(array('inserted' => false), 200);
+	    return new JsonResponse(array(
+            'error' => 'Only method POST'
+            ), 400);
     }
     
     /**
@@ -89,7 +115,29 @@ class __CLASSNAME__Controller
      */
     function edit(App $app, $id)
     {
-        return new JsonResponse(array('updated' => true), 200);
+        if (isset($app['db'])) {
+            $db = $app['db'];
+        } else if (isset($app['orm.em'])) {
+            $db = $app['orm.em']->getConnection();
+        } else {
+            throw new Exception("DB connection not found");
+        }
+
+        if ("POST" == $app['request']->getMethod() || "PUT" == $app['request']->getMethod()) {
+            // Data
+            $data = $app['request']->request->all();
+
+            // Affected rows
+            $affectedRows = __CLASSNAME__::getInstance($db)->update($data);
+
+            return new JsonResponse(array(
+                'updated' => ($affectedRows > 0)
+                ), 200);
+        }
+
+        return new JsonResponse(array(
+            'error' => 'Only method POST|PUT allowed'
+            ), 400);
     }
     
     /**
@@ -101,6 +149,25 @@ class __CLASSNAME__Controller
      */
     function delete(App $app, $id)
     {
-        return new JsonResponse(array('deleted' => true), 200);
+        if (isset($app['db'])) {
+            $db = $app['db'];
+        } else if (isset($app['orm.em'])) {
+            $db = $app['orm.em']->getConnection();
+        } else {
+            throw new Exception("DB connection not found");
+        }
+
+        if("DELETE" == $app['request']->getMethod()) {
+            // Affected rows
+            $affectedRows = __CLASSNAME__::getInstance($db)->delete($id);
+
+            return new JsonResponse(array(
+                'deleted' => ($affectedRows > 0)
+                ), 200);
+        }
+
+        return new JsonResponse(array(
+            'error' => 'Only method DELETE allowed'
+            ), 400);
     }
 }

@@ -13,6 +13,8 @@ use Doctrine\DBAL\Connection;
 class __CLASSNAME__ extends BaseModel
 {
 
+    static $instance;
+
 	/**
      * Category model construct
      * 
@@ -41,17 +43,39 @@ class __CLASSNAME__ extends BaseModel
 	/**
      * Delete 
      * 
-     * @param int $id
+     * @param int $__TABLE_PRIMARYKEY__
      * @return int
      * @throws \LogicException
      */
-    public function delete($id = null)
+    public function delete($__TABLE_PRIMARYKEY__ = null)
     {
-        if (!$id) {
+        if (!$__TABLE_PRIMARYKEY__) {
             throw new \LogicException('Can\'t delete without param __TABLE_PRIMARYKEY__.');
         }
         
-        return $this->_delete(array('__TABLE_PRIMARYKEY__' => $id));
+        return $this->_delete(array('__TABLE_PRIMARYKEY__' => $__TABLE_PRIMARYKEY__));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function insert(array $data)
+    {
+        return $this->_insert($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function update($__TABLE_PRIMARYKEY__ = null, array $data = array())
+    {
+        if (!$__TABLE_PRIMARYKEY__) {
+            throw new \LogicException('Can\'t update without param __TABLE_PRIMARYKEY__.');
+        }
+
+        $criteria = array('__TABLE_PRIMARYKEY__' => $__TABLE_PRIMARYKEY__);
+
+        return $this->_update($data, $criteria);
     }
 
 }

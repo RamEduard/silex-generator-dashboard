@@ -1,0 +1,16 @@
+{% extends "layout.twig" %}
+
+{% block title %}Angular JS{% endblock %}
+
+{% block html_params %}ng-app="app"{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <h1>Angular JS</h1>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ app.asset_path }}/js/plugins/angular/angular.min.js"></script>
+{% endblock %}

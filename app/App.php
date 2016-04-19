@@ -36,7 +36,7 @@ class App extends SilexApplication
             //new DashboardModule\DashboardModule(),
             new GeneratorModule\GeneratorModule(),
             new FrontendModule\FrontendModule(),
-            new APIModule\APIModule()
+            // new APIModule\APIModule()
         );
     }
     

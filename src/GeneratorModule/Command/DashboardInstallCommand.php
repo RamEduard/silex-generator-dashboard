@@ -42,7 +42,7 @@ class DashboardInstallCommand extends Command
         // Set Module name
         $moduleName = $input->getArgument('module_name');
 
-        if ($moduleName != '') $this->moduleName = $moduleName;
+        if ($moduleName != '') $this->moduleName = SharedFunctions::getInstance()->camelize($moduleName);
         
         // Array tables
         $tables = SharedFunctions::getInstance()->getArrayTables($app);

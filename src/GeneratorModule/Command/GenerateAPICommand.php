@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use GeneratorModule\SharedFunctions;
 
 /**
  * Description of GenerateAPICommand
@@ -30,7 +31,7 @@ class GenerateAPICommand extends Command
     {
         $this
             ->addArgument('module_name', InputArgument::OPTIONAL, 'Module Name for Dashboard', 'APIModule')
-            ->setDescription('Generate dashboard administrator');
+            ->setDescription('Generate API Module');
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -41,12 +42,12 @@ class GenerateAPICommand extends Command
         // Set Module name
         $moduleName = $input->getArgument('module_name');
 
-        if ($moduleName != '') $this->moduleName = $this->camelize($moduleName);
+        if ($moduleName != '') $this->moduleName = SharedFunctions::getInstance()->camelize($moduleName);
         
         // Array tables
-        $tables = $this->getArrayTables($app);
+        $tables = SharedFunctions::getInstance()->getArrayTables($app);
 
-        // Create Dashboard Module
+        // Create API Module
         $API_PATH             = dirname($app->getAppDir()) . '/src/' . $this->moduleName;
         $API_BASE_NAME        = str_replace('Module', '', $this->moduleName);
         // Base namespace controller
@@ -55,6 +56,15 @@ class GenerateAPICommand extends Command
 
         // Message to the user
         $output->writeln('Creating Module and API on <comment>' . $API_PATH . '</comment>.');
+
+        // Module required templates
+        $_module = @file_get_contents($TEMPLATES_PATH . '/class_module.php');
+        $_module = str_replace("__MODULE__", $this->moduleName, $_module);
+
+        // Injection
+        $_extension = @file_get_contents($TEMPLATES_PATH . '/class_extension.php');
+        $_extension = str_replace("__MODULE__", $this->moduleName, $_extension);
+        $_extension = str_replace("__BASENAME__", $API_BASE_NAME, $_extension);
 
         if (!empty($tables)) {
             // Create Dir DashboardModule
@@ -65,6 +75,8 @@ class GenerateAPICommand extends Command
             @fclose($fp);
             // Create Dir Controller
             @mkdir($API_PATH . '/Controller', 0755);
+            // Create Dir Entity
+            @mkdir($API_PATH . '/Entity', 0755);
             // Create Dir Injection
             @mkdir($API_PATH . '/Injection', 0755);
             // Extension Injection
@@ -72,12 +84,12 @@ class GenerateAPICommand extends Command
             @fwrite($fp, $_extension);
             @fclose($fp);
             // Create Dir Model
-            @mkdir($DASHBOARD_PATH . '/Model', 0755);
+            @mkdir($API_PATH . '/Model', 0755);
             // Create Dir Resources
-            @mkdir($DASHBOARD_PATH . '/Resources', 0755);
+            @mkdir($API_PATH . '/Resources', 0755);
             // Create Dir routes
-            @mkdir($DASHBOARD_PATH . '/Resources/config', 0755);
-            @mkdir($DASHBOARD_PATH . '/Resources/config/routes', 0755);
+            @mkdir($API_PATH . '/Resources/config', 0755);
+            @mkdir($API_PATH . '/Resources/config/routes', 0755);
         }
         
         foreach($tables as $table_name => $table) {
@@ -86,7 +98,7 @@ class GenerateAPICommand extends Command
             $output->writeln('Creating CRUD for table <comment>' . $table_name . '</comment>.');
             
             $TABLENAME = $table_name;
-            $CLASSNAME = $this->camelize($TABLENAME);
+            $CLASSNAME = SharedFunctions::getInstance()->camelize($TABLENAME);
             $CONTROLLER = $CONTROLLER_NAMESPACE . $CLASSNAME . 'Controller';
     
             // Router file
@@ -95,7 +107,7 @@ class GenerateAPICommand extends Command
             $_router = str_replace("__CONTROLLER__", $CONTROLLER, $_router);
             
             // Class Controller
-            $_controller = @file_get_contents($TEMPLATES_PATH . '/class_controller.php');
+            $_controller = @file_get_contents($TEMPLATES_PATH . '/api_class_controller.php');
             $_controller = str_replace("__MODULE__", $this->moduleName, $_controller);
             $_controller = str_replace("__CLASSNAME__", $CLASSNAME, $_controller);
             
@@ -112,133 +124,6 @@ class GenerateAPICommand extends Command
 
         // Message to the user
         $output->writeln('Generated API on <comment>src/' . $this->moduleName . '</comment>.');
-    }
-    
-    /**
-     * Get tables from database
-     *
-     * @param $app
-     * @return array $tables
-     */
-    protected function getArrayTables($app)
-    {
-        $getTablesQuery = "SHOW TABLES";
-        $getTablesResult = $app['db']->fetchAll($getTablesQuery, array());
-        
-        $_dbTables = array();
-        $dbTables = array();
-
-        foreach($getTablesResult as $getTableResult){
-
-            $_dbTables[] = reset($getTableResult);
-
-            $dbTables[] = array(
-                "name" => reset($getTableResult),
-                "columns" => array()
-            );
-        }
-
-        foreach($dbTables as $dbTableKey => $dbTable){
-            $getTableColumnsQuery = "SHOW COLUMNS FROM `" . $dbTable['name'] . "`";
-            $getTableColumnsResult = $app['db']->fetchAll($getTableColumnsQuery, array());
-
-            foreach($getTableColumnsResult as $getTableColumnResult){
-                $dbTables[$dbTableKey]['columns'][] = $getTableColumnResult;
-            }
-
-        }
-
-        $tables = array();
-        foreach($dbTables as $dbTable){
-
-            if(count($dbTable['columns']) <= 1){
-                continue;
-            }
-
-            $table_name = $dbTable['name'];
-            $table_columns = array();
-            $primary_key = false;
-
-            $primary_keys = 0;
-            $primary_keys_auto = 0;
-            foreach($dbTable['columns'] as $column){
-                if($column['Key'] == "PRI"){
-                    $primary_keys++;
-                }
-                if($column['Extra'] == "auto_increment"){
-                    $primary_keys_auto++;
-                }
-            }
-
-            if($primary_keys === 1 || ($primary_keys > 1 && $primary_keys_auto === 1)){
-
-                foreach($dbTable['columns'] as $column){
-
-                    $external_table = false;
-
-                    if($primary_keys > 1 && $primary_keys_auto == 1){
-                        if($column['Extra'] == "auto_increment"){
-                            $primary_key = $column['Field'];
-                        }
-                    }
-                    else if($primary_keys == 1){
-                        if($column['Key'] == "PRI"){
-                            $primary_key = $column['Field'];
-                        }
-                    }
-                    else{
-                        continue 2;
-                    }
-
-                    if(substr($column['Field'], -3) == "_id"){
-                        $_table_name = substr($column['Field'], 0, -3);
-
-                        if(in_array($_table_name, $_dbTables)){
-                            $external_table = $_table_name;
-                        }
-                    }
-
-                    $table_columns[] = array(
-                        "name" => $column['Field'],
-                        "primary" => $column['Field'] == $primary_key ? true : false,
-                        "nullable" => $column['Null'] == "NO" ? true : false,
-                        "auto" => $column['Extra'] == "auto_increment" ? true : false,
-                        "external" => $column['Field'] != $primary_key ? $external_table : false,
-                        "type" => $column['Type']
-                    );
-                }
-
-            }
-            else{
-                continue;
-            }
-
-
-            $tables[$table_name] = array(
-                "primary_key" => $primary_key,
-                "columns" => $table_columns
-            );
-
-        }
-
-        return $tables;
-    }
-
-    /**
-     * Camelize
-     *
-     * @param string $input
-     * @return string
-     */
-    protected function camelize($input)
-    {
-        $replace = array(
-            '-' => '',
-            '_' => '',
-            '.' => '',
-            ' ' => '',
-        );
-        return @ucwords(str_replace(array_keys($replace), array_values($replace), $input));
     }
     
 }

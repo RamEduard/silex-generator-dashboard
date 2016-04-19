@@ -6,6 +6,7 @@
  * @author Ramon Serrano <ramon.calle.88@gmail.com>
  */
 
+
 /**
  * List route
  */
@@ -29,3 +30,9 @@ $app->match('/api/__TABLENAME__/edit/{id}', '__CONTROLLER__::edit')
  */
 $app->match('/api/__TABLENAME__/delete/{id}', '__CONTROLLER__::delete')
     ->bind('__TABLENAME___delete');
+
+/**
+ * Restricted route
+ */
+$app->get('/api/__TABLENAME__/restricted', '__CONTROLLER__::restricted')
+    ->bind('__TABLENAME___restricted');

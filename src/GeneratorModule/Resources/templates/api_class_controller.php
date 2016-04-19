@@ -17,6 +17,40 @@ use Symfony\Component\Validator\Constraints as Assert;
 class __CLASSNAME__Controller 
 {
 
+    /**
+     * Authenticate middleware
+     */
+    public function authenticate() 
+    {
+        $valid_passwords = array (
+            "admin" => "admin",
+        );
+        $valid_users = array_keys($valid_passwords);
+
+        $user = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
+        $pass = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
+
+        return (in_array($user, $valid_users)) && ($pass == $valid_passwords[$user]);
+    }
+
+    /**
+     * Create or Update usuarios
+     */
+    function restricted(App $app)
+    {
+        // Authenticate
+        $validated = $this->authenticate();
+        
+        if (!$validated) {
+            $response = new JsonResponse('Not Authorized', 401);
+            $response->headers->set('WWW-Authenticate', 'Basic realm="My Realm"');
+        } else {
+            $response = new JsonResponse(array('response' => 'Authorized'), 401);
+        }
+        
+        return $response;
+    }
+
 	/**
      * List __CLASSNAME__ action
      * 

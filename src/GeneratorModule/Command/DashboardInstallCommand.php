@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use GeneratorModule\SharedFunctions;
 
 /**
  * Description of AssetInstallCommand
@@ -44,7 +45,7 @@ class DashboardInstallCommand extends Command
         if ($moduleName != '') $this->moduleName = $moduleName;
         
         // Array tables
-        $tables = $this->getArrayTables($app);
+        $tables = SharedFunctions::getInstance()->getArrayTables($app);
 
         // Create Dashboard Module
         $DASHBOARD_PATH      = dirname($app->getAppDir()) . '/src/' . $this->moduleName;
@@ -62,6 +63,7 @@ class DashboardInstallCommand extends Command
         // Injection
         $_extension = @file_get_contents($TEMPLATES_PATH . '/class_extension.php');
         $_extension = str_replace("__MODULE__", $this->moduleName, $_extension);
+        $_extension = str_replace("__BASENAME__", $DASHBOARD_BASE_NAME, $_extension);
 
         // UploadImage
         $_uploadImage = @file_get_contents($TEMPLATES_PATH . '/class_upload_image.php');
@@ -155,7 +157,7 @@ class DashboardInstallCommand extends Command
             // Create Dir views
             @mkdir($DASHBOARD_PATH . '/Resources/views', 0755);
             // Copy views auth and dashboard
-            $this->resourceCopy($TEMPLATES_PATH . '/views', $DASHBOARD_PATH . '/Resources/views');
+            SharedFunctions::getInstance()->resourceCopy($TEMPLATES_PATH . '/views', $DASHBOARD_PATH . '/Resources/views');
         }
 
         foreach($tables as $table_name => $table) {
@@ -168,7 +170,7 @@ class DashboardInstallCommand extends Command
             $table_columns = $table['columns'];
 
             $TABLENAME = $table_name;
-            $CLASSNAME = $this->camelize($TABLENAME);
+            $CLASSNAME = SharedFunctions::getInstance()->camelize($TABLENAME);
             $CONTROLLER = $CONTROLLER_NAMESPACE . $CLASSNAME . 'Controller';
             $TABLE_PRIMARYKEY = $table['primary_key'];
 
@@ -445,153 +447,5 @@ class DashboardInstallCommand extends Command
         // Message to the user
         $output->writeln('Installed DashboardModule as <comment>' . $this->moduleName . '</comment>.');
     }
-    
-    /**
-     * Get tables from database
-     *
-     * @param $app
-     * @return array $tables
-     */
-    protected function getArrayTables($app)
-    {
-        $getTablesQuery = "SHOW TABLES";
-        $getTablesResult = $app['db']->fetchAll($getTablesQuery, array());
-        
-        $_dbTables = array();
-        $dbTables = array();
 
-        foreach($getTablesResult as $getTableResult){
-
-            $_dbTables[] = reset($getTableResult);
-
-            $dbTables[] = array(
-                "name" => reset($getTableResult),
-                "columns" => array()
-            );
-        }
-
-        foreach($dbTables as $dbTableKey => $dbTable){
-            $getTableColumnsQuery = "SHOW COLUMNS FROM `" . $dbTable['name'] . "`";
-            $getTableColumnsResult = $app['db']->fetchAll($getTableColumnsQuery, array());
-
-            foreach($getTableColumnsResult as $getTableColumnResult){
-                $dbTables[$dbTableKey]['columns'][] = $getTableColumnResult;
-            }
-
-        }
-
-        $tables = array();
-        foreach($dbTables as $dbTable){
-
-            if(count($dbTable['columns']) <= 1){
-                continue;
-            }
-
-            $table_name = $dbTable['name'];
-            $table_columns = array();
-            $primary_key = false;
-
-            $primary_keys = 0;
-            $primary_keys_auto = 0;
-            foreach($dbTable['columns'] as $column){
-                if($column['Key'] == "PRI"){
-                    $primary_keys++;
-                }
-                if($column['Extra'] == "auto_increment"){
-                    $primary_keys_auto++;
-                }
-            }
-
-            if($primary_keys === 1 || ($primary_keys > 1 && $primary_keys_auto === 1)){
-
-                foreach($dbTable['columns'] as $column){
-
-                    $external_table = false;
-
-                    if($primary_keys > 1 && $primary_keys_auto == 1){
-                        if($column['Extra'] == "auto_increment"){
-                            $primary_key = $column['Field'];
-                        }
-                    }
-                    else if($primary_keys == 1){
-                        if($column['Key'] == "PRI"){
-                            $primary_key = $column['Field'];
-                        }
-                    }
-                    else{
-                        continue 2;
-                    }
-
-                    if(substr($column['Field'], -3) == "_id"){
-                        $_table_name = substr($column['Field'], 0, -3);
-
-                        if(in_array($_table_name, $_dbTables)){
-                            $external_table = $_table_name;
-                        }
-                    }
-
-                    $table_columns[] = array(
-                        "name" => $column['Field'],
-                        "primary" => $column['Field'] == $primary_key ? true : false,
-                        "nullable" => $column['Null'] == "NO" ? true : false,
-                        "auto" => $column['Extra'] == "auto_increment" ? true : false,
-                        "external" => $column['Field'] != $primary_key ? $external_table : false,
-                        "type" => $column['Type']
-                    );
-                }
-
-            }
-            else{
-                continue;
-            }
-
-
-            $tables[$table_name] = array(
-                "primary_key" => $primary_key,
-                "columns" => $table_columns
-            );
-
-        }
-
-        return $tables;
-    }
-
-    /**
-     * Camelize
-     *
-     * @param string $input
-     * @return string
-     */
-    protected function camelize($input)
-    {
-        $replace = array(
-            '-' => '',
-            '_' => '',
-            '.' => '',
-            ' ' => '',
-        );
-        return @ucwords(str_replace(array_keys($replace), array_values($replace), $input));
-    }
-
-    /**
-     * Copy directory to destiny directory
-     * 
-     * @param string $sourceDir
-     * @param string $destinyDir
-     */
-    protected function resourceCopy($sourceDir, $destinyDir)
-    {
-        $dir = opendir($sourceDir);
-        @mkdir($destinyDir);
-        while (false !== ( $file = readdir($dir))) {
-            if (( $file != '.' ) && ( $file != '..' )) {
-                if (is_dir($sourceDir . '/' . $file)) {
-                    $this->resourceCopy($sourceDir . '/' . $file, $destinyDir . '/' . $file);
-                } else {
-                    copy($sourceDir . '/' . $file, $destinyDir . '/' . $file);
-                }
-            }
-        }
-        closedir($dir);
-    }
 }

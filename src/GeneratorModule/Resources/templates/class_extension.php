@@ -9,7 +9,7 @@ use Application\MVCExtension;
  *
  * @author Ramón Serrano <ramon.calle.88@gmail.com>
  */
-class DashboardExtension extends MVCExtension
+class __BASENAME__Extension extends MVCExtension
 {
 
 }

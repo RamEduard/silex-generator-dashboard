@@ -94,6 +94,8 @@ class GenerateAPICommand extends Command
         
         foreach($tables as $table_name => $table) {
 
+            $TABLE_PRIMARYKEY = $table['primary_key'];
+
             // Message to the user
             $output->writeln('Creating CRUD for table <comment>' . $table_name . '</comment>.');
             
@@ -110,6 +112,13 @@ class GenerateAPICommand extends Command
             $_controller = @file_get_contents($TEMPLATES_PATH . '/api_class_controller.php');
             $_controller = str_replace("__MODULE__", $this->moduleName, $_controller);
             $_controller = str_replace("__CLASSNAME__", $CLASSNAME, $_controller);
+
+            // Model class
+            $_model = @file_get_contents($TEMPLATES_PATH . '/class_model.php');
+            $_model = str_replace("__MODULE__", $this->moduleName, $_model);
+            $_model = str_replace("__TABLENAME__", $TABLENAME, $_model);
+            $_model = str_replace("__CLASSNAME__", $CLASSNAME, $_model);
+            $_model = str_replace("__TABLE_PRIMARYKEY__", $TABLE_PRIMARYKEY, $_model);
             
             // Create router file
             $fp = @fopen($API_PATH . '/Resources/config/routes/' . $TABLENAME . '.php', "w+");
@@ -120,10 +129,15 @@ class GenerateAPICommand extends Command
             $fp = @fopen($API_PATH . '/Controller/' . $CLASSNAME . 'Controller.php', "w+");
             @fwrite($fp, $_controller);
             @fclose($fp);
+
+            // Create model class
+            $fp = @fopen($API_PATH . '/Model/' . $CLASSNAME . '.php', "w+");
+            @fwrite($fp, $_model);
+            @fclose($fp);
         }
 
         // Message to the user
-        $output->writeln('Generated API on <comment>src/' . $this->moduleName . '</comment>.');
+        $output->writeln('Generated API on <info>src/' . $this->moduleName . '</info>.');
     }
     
 }

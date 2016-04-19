@@ -88,7 +88,7 @@ return array(
     // )),
     'orm' => array( new DoctrineORM\Provider\DoctrineServiceProvider(), array(
         'params'       => array(
-            'charset'  => null,
+            'charset'  => 'utf8',
             'driver'   => 'pdo_mysql',
             'dbname'   => 'secanew',
             'host'     => 'localhost',

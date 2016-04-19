@@ -53,7 +53,15 @@ return array(
                         'invalidate_session' => false
                     ),
                     'users' => $app->share(function($app) {
-                        return new Application\UserProvider($app['db']);
+                        if (isset($app['db'])) {
+                            $db = $app['db'];
+                        } else if (isset($app['orm.em'])) {
+                            $db = $app['orm.em']->getConnection();
+                        } else {
+                            throw new Exception("DB connection not found");
+                        }
+
+                        return new Application\UserProvider($db);
                     }),
                 )
             ),
@@ -66,29 +74,29 @@ return array(
             )
         )
     ),
-    'doctrine_dev' => array(new Silex\Provider\DoctrineServiceProvider(), array(
-        'dbs.options' => array(
-            'db' => array(
-                'driver'   => 'pdo_mysql',
-                'dbname'   => 'secanew',
-                'host'     => 'localhost',
-                'user'     => 'root',
-                'password' => '',
-                'charset'  => 'utf8'
-            )
-        )
-    )),
+    // 'doctrine_dev' => array(new Silex\Provider\DoctrineServiceProvider(), array(
+    //     'dbs.options' => array(
+    //         'db' => array(
+    //             'driver'   => 'pdo_mysql',
+    //             'dbname'   => 'secanew',
+    //             'host'     => 'localhost',
+    //             'user'     => 'root',
+    //             'password' => '',
+    //             'charset'  => 'utf8'
+    //         )
+    //     )
+    // )),
     'orm' => array( new DoctrineORM\Provider\DoctrineServiceProvider(), array(
         'params'       => array(
             'charset'  => null,
             'driver'   => 'pdo_mysql',
-            'dbname'   => null,
+            'dbname'   => 'secanew',
             'host'     => 'localhost',
             'user'     => 'root',
             'password' => '',
             'port'     => null,
         ),
-        'dev_mode'     => false,
+        'dev_mode'     => true,
         'etities_type' => 'annotations',
         'path_entities' => array(
             __DIR__ . '/../../Application/Entity'

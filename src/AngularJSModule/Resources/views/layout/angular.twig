@@ -6,11 +6,28 @@
 
 {% block content %}
     <div class="row">
+	    <ul class="menu">
+		    <li><a href="#/index">Example</a></li>
+		    <li><a href="#/index2">Example 2</a></li>
+	  	</ul>
         <h1>Angular JS</h1>
     </div>
 {% endblock %}
 
 {% block javascripts %}
 	{{ parent() }}
+	<!-- Angular Lib -->
 	<script src="{{ app.asset_path }}/js/plugins/angular/angular.min.js"></script>
+	<!-- Angular Route Lib -->
+	<script src="{{ app.asset_path }}/js/plugins/angular-route/angular-route.min.js"></script>
+	<!-- App -->
+	<script src="{{ app.modules_path }}/angularjs/js/app.js"></script>
+	<!-- Vars -->
+	<script>
+		var TEMPLATES_PATH = '{{ app.modules_path }}/angularjs/templates';
+	</script>
+	<!-- Index module -->
+	<script src="{{ app.modules_path }}/angularjs/modules/index.js"></script>
+	<!-- Index2 module -->
+	<script src="{{ app.modules_path }}/angularjs/modules/index2.js"></script>
 {% endblock %}

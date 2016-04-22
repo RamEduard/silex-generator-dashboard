@@ -8,7 +8,9 @@
 .navbar .nav .open > a.active {
     background-color: rgba(0, 0, 0, 0.15);
 }
-
+.navbar-nav.navbar-right > li > a {
+    padding: 10px;
+}
 @media (min-width: 768px) {
     .navbar-nav.navbar-right:last-child {
         margin-right: 0px;

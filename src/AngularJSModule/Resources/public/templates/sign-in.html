@@ -1,0 +1,50 @@
+<style>
+    .checkbox {
+        margin-left: 20px;
+    }
+</style>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-body">
+                <form class="form-signin">
+                    <h2 class="form-signin-heading" style="text-align: center">Iniciar sesión</h2>
+                    <!-- Error callout -->
+                    <div class="callout callout-danger" ng-if="error">
+                        <button type="button" class="close" onclick="$('.callout').fadeOut(2000)">×</button>
+                        <h4>Error</h4>
+                        <p>{{ error }}</p>
+                    </div>
+
+                    <div class=" input-group">
+                        <span class="input-group-addon glyphicon glyphicon-user"></span>
+                        <input type="text"
+                               class="form-control"
+                               id="_username"
+                               name="_username"
+                               placeholder="Usuario o Correo"
+                               required autofocus>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                        <input type="password"
+                               class="form-control"
+                               id="_password"
+                               name="_password"
+                               placeholder="Clave"
+                               required>
+                    </div>
+                    <label class="checkbox">
+                        <input type="checkbox"
+                               id="recordarme"
+                               name="recordarme" value=1 > Mantenerme conectado
+                    </label>
+                    <div>
+                        <button class="btn btn-large btn-primary" type="submit">Iniciar sesión</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

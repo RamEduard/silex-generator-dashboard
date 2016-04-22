@@ -4,14 +4,12 @@
 
 {% block html_params %}ng-app="app"{% endblock %}
 
-{% block content %}
-    <div class="row">
-	    <ul class="menu">
-		    <li><a href="#/index">Example</a></li>
-		    <li><a href="#/index2">Example 2</a></li>
-	  	</ul>
-        <h1>Angular JS</h1>
-    </div>
+{% block menu %}
+    {% include 'layout/menu.twig' %}
+{% endblock %}
+
+{% block footer %}
+    {% include 'layout/footer.twig' %}
 {% endblock %}
 
 {% block javascripts %}
@@ -20,14 +18,25 @@
 	<script src="{{ app.asset_path }}/js/plugins/angular/angular.min.js"></script>
 	<!-- Angular Route Lib -->
 	<script src="{{ app.asset_path }}/js/plugins/angular-route/angular-route.min.js"></script>
-	<!-- App -->
+    <!-- Vars -->
+    <script>
+        var TEMPLATES_PATH = '{{ app.modules_path }}/angularjs/templates';
+    </script>
+
+	<!-- Angular APP -->
 	<script src="{{ app.modules_path }}/angularjs/js/app.js"></script>
-	<!-- Vars -->
-	<script>
-		var TEMPLATES_PATH = '{{ app.modules_path }}/angularjs/templates';
-	</script>
-	<!-- Index module -->
-	<script src="{{ app.modules_path }}/angularjs/modules/index.js"></script>
-	<!-- Index2 module -->
-	<script src="{{ app.modules_path }}/angularjs/modules/index2.js"></script>
+
+    <!-- Config constants and routes -->
+    <script src="{{ app.modules_path }}/angularjs/config/constants.js"></script>
+    <script src="{{ app.modules_path }}/angularjs/config/routes.js"></script>
+
+    <!-- Services -->
+    <script src="{{ app.modules_path }}/angularjs/services/auth.js"></script>
+
+    <!-- Controllers -->
+    <script src="{{ app.modules_path }}/angularjs/controllers/about.js"></script>
+    <script src="{{ app.modules_path }}/angularjs/controllers/contact.js"></script>
+    <script src="{{ app.modules_path }}/angularjs/controllers/home.js"></script>
+    <script src="{{ app.modules_path }}/angularjs/controllers/sign-in.js"></script>
+
 {% endblock %}

@@ -23,7 +23,8 @@
         "symfony/config": "~2.6",
         "symfony/translation": "~2.6",
         "symfony/security-csrf": "~2.6",
-        "doctrine/orm": "2.3.6"
+        "doctrine/orm": "2.3.6",
+        "namshi/jose": "^7.1"
     },
     "minimum-stability": "dev",
     "autoload": {

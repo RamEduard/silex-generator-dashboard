@@ -1,3 +1,4 @@
+// AngularJS App
 (function () {
 	'use strict';
 

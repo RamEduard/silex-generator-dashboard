@@ -32,6 +32,12 @@
             controller: 'SignInCtrl'
         });
 
+        // Sign Up
+        $routeProvider.when('/sign-up', {
+            templateUrl: TEMPLATES_PATH + '/sign-up.html',
+            controller: 'SignUpCtrl'
+        });
+
         $routeProvider.otherwise({redirectTo: '/home'});
     }
 })();

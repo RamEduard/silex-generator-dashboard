@@ -123,4 +123,62 @@ class DefaultController
             )
         ));
     }
+
+    /**
+     * Contact action
+     * 
+     * @param App $app
+     * @return JsonResponse
+     */
+    function contact(App $app)
+    {
+        $website = 'Silex Generator Dashboard';
+        $to      = 'ramon.calle.88@gmail.com';
+
+        // Request Data
+        $name    = $app['request']->request->get('name');
+        $subject = $app['request']->request->get('subject');
+        $email   = $app['request']->request->get('email');
+        $message = $app['request']->request->get('message');
+
+        $messageHtml  = '<div style="margin:auto;position: relative;background: #FFF;border-top: 2px solid #00C0EF;margin-bottom: 20px;border-radius: 3px;width: 90%;box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);padding: 20px 30px">';
+        $messageHtml .= "<p>You received a message from $name $email por medio de $website.</p>";
+        $messageHtml .= "<p>The message is:";
+        $messageHtml .= "<div style=\"background-color: #F0F7FD;margin: 0px 0px 20px;padding: 15px 30px 15px 15px;border-left: 5px solid #D0E3F0;\">$message</div>";
+        $messageHtml .= '</div>';
+
+        $swiftMessage = \Swift_Message::newInstance("$subject - $website")
+                ->setFrom(array($email => $name))
+                ->setTo($to)
+                ->setBody($messageHtml, 'text/html');
+                
+        try 
+        {
+            // Custom GMail transport
+            $transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
+                ->setUsername('****')
+                ->setPassword('****');
+
+            $mailer = \Swift_Mailer::newInstance($transport);
+
+            $result = $mailer->send($swiftMessage);
+
+            // Response
+            $response = new JsonResponse(array('result' => $result));
+        } catch (\Swift_TransportException $ste) {
+            $mailer->getTransport()->stop();
+            
+            // Response
+            $response = new JsonResponse(array(
+                'error' => $ste->getMessage()
+            ), 500);
+        } catch (\Exception $ex) {
+            // Response
+            $response = new JsonResponse(array(
+                'error' => $ex->getMessage()
+            ), 500);
+        }
+
+        return $response;
+    }
 }

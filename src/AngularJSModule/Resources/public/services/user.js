@@ -80,6 +80,27 @@
                 });
         };
 
+        service.contact = function (name, subject, email, message, callback) {
+            return $http({
+                method: 'POST',
+                url: API_URL + '/contact',
+                data: {
+                    name: name,
+                    subject: subject,
+                    email: email,
+                    message: message
+                }
+            })
+                .then(function (response) {
+                    if (response.status == 200) {
+                        callback(null, response['data']);
+                    }
+                })
+                .catch(function (errorResp) {
+                    callback(new Error(errorResp['data']['error']), errorResp['data']);
+                });
+        };
+
         return service;
     }
 

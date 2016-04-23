@@ -31,3 +31,7 @@ $app->match("/api/auth/form", "AngularJSModule\\Controller\\DefaultController::f
 // Sign Up Example
 $app->match("/api/sign-up", "AngularJSModule\\Controller\\DefaultController::signUp")
     ->bind('angularjs_signup');
+
+// Contact Example
+$app->match("/api/contact", "AngularJSModule\\Controller\\DefaultController::contact")
+    ->bind('angularjs_contact');

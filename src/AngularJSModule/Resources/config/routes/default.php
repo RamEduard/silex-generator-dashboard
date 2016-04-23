@@ -21,9 +21,13 @@ $app->match("/angularjs", "AngularJSModule\\Controller\\DefaultController::index
     ->bind("angularjs_index");
 
 // HTTP Basic auth
-$app->match("/api/auth/basic","AngularJSModule\\Controller\\DefaultController::basicAuth")
+$app->match("/api/auth/basic", "AngularJSModule\\Controller\\DefaultController::basicAuth")
     ->bind('angularjs_auth_basic');
 
 // Form data auth
-$app->match("/api/auth/form","AngularJSModule\\Controller\\DefaultController::formAuth")
+$app->match("/api/auth/form", "AngularJSModule\\Controller\\DefaultController::formAuth")
     ->bind('angularjs_auth_form');
+
+// Sign Up Example
+$app->match("/api/sign-up", "AngularJSModule\\Controller\\DefaultController::signUp")
+    ->bind('angularjs_signup');

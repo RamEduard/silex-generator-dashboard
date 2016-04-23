@@ -95,4 +95,32 @@ class DefaultController
         
         return $response;
     }
+
+    /**
+     * Sign Up action
+     * 
+     * @param App $app
+     * @return JsonResponse
+     */
+    function signUp(App $app)
+    {
+        $firstName   = $app['request']->request->get('firstName');
+        $lastName    = $app['request']->request->get('lastName');
+        $displayName = $app['request']->request->get('displayName');
+        $email       = $app['request']->request->get('email');
+        $password    = $app['request']->request->get('password');
+        $agree       = $app['request']->request->get('agree');
+        
+        return new JsonResponse(array(
+            'inserted' => true,
+            'user'     => array(
+                'firstName'   => $firstName,
+                'lastName'    => $lastName,
+                'displayName' => $displayName,
+                'email'       => $email,
+                'password'    => $password, 
+                'agree'       => $agree
+            )
+        ));
+    }
 }

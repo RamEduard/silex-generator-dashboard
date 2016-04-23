@@ -5,15 +5,16 @@
         .module('app')
         .controller('SignInCtrl', SignInCtrl);
 
-    SignInCtrl.$inject = ['$scope', 'AuthService'];
+    SignInCtrl.$inject = ['$scope', 'UserService'];
 
     /**
      * [SignInCtrl]
      * @param $scope
+     * @param UserService
      * @constructor
      */
-    function SignInCtrl ($scope, AuthService) {
-        $scope.username   = '';
+    function SignInCtrl ($scope, UserService) {
+        $scope.email   = '';
         $scope.password   = '';
         $scope.rememberme = true;
 
@@ -22,13 +23,13 @@
             $scope.success = '';
             $scope.details = '';
 
-            AuthService.basicAuth($scope.username, $scope.password, function(error, response) {
+            UserService.basicAuth($scope.email, $scope.password, function(error, response) {
                 // if has been ocurred an error
                 if (error) {
                     $scope.error = 'An error has been ocurred while sign in.';
                     $scope.details = JSON.stringify(response);
                 } else {
-                    $scope.username = '';
+                    $scope.email = '';
                     $scope.password = '';
 
                     // Add action here
@@ -43,13 +44,13 @@
             $scope.success = '';
             $scope.details = '';
 
-            AuthService.signIn($scope.username, $scope.password, function(error, response) {
+            UserService.signIn($scope.email, $scope.password, function(error, response) {
                 // if has been ocurred an error
                 if (error) {
                     $scope.error = 'An error has been ocurred while sign in.';
                     $scope.details = JSON.stringify(response);
                 } else {
-                    $scope.username = '';
+                    $scope.email = '';
                     $scope.password = '';
 
                     // Add action here

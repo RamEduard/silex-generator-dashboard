@@ -29,7 +29,7 @@ class DefaultController
     }
     
     /**
-     * Index action
+     * Basic auth action
      * 
      * @param App $app
      * @return JsonResponse
@@ -49,7 +49,40 @@ class DefaultController
 
         if (!$validated) {
             $response = new JsonResponse(array('error' => 'Not Authorized'), 401);
-            $response->headers->set('WWW-Authenticate', 'Basic realm="Angular JS Realm"');
+        } else {
+            $response = new JsonResponse(array(
+                'response' => 'Authorized',
+                'user'     => array(
+                    'email' => $email,
+                    'pass'  => $pass
+                )
+            ));
+        }
+        
+        return $response;
+    }
+
+    /**
+     * Form auth action
+     * 
+     * @param App $app
+     * @return JsonResponse
+     */
+    function formAuth(App $app)
+    {
+        $valid_passwords = array (
+            "admin@example.com" => "admin",
+            "user@example.com"  => "user"
+        );
+        $valid_users = array_keys($valid_passwords);
+
+        $email = $app['request']->request->get('email');
+        $pass = $app['request']->request->get('password');
+
+        $validated = (in_array($email, $valid_users)) && ($pass == $valid_passwords[$email]);
+
+        if (!$validated) {
+            $response = new JsonResponse(array('error' => 'Not Authorized'), 401);
         } else {
             $response = new JsonResponse(array(
                 'response' => 'Authorized',

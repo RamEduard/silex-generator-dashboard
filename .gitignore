@@ -2,3 +2,5 @@ vendor
 app.log
 .idea
 composer.lock
+src/APIModule
+src/DashboardModule

@@ -1,19 +1,22 @@
-<style>
-    .checkbox {
-        margin-left: 20px;
-    }
-</style>
-<div class="row">
+<div class="row login-row">
     <div class="col-xs-12">
         <div class="box">
             <div class="box-body">
-                <form class="form-signin">
-                    <h2 class="form-signin-heading" style="text-align: center">Iniciar sesión</h2>
+                <form class="form-signin" ng-submit="signIn()">
+                    <h2 class="form-signin-heading" style="text-align: center">Sign In</h2>
                     <!-- Error callout -->
                     <div class="callout callout-danger" ng-if="error">
                         <button type="button" class="close" onclick="$('.callout').fadeOut(2000)">×</button>
                         <h4>Error</h4>
                         <p>{{ error }}</p>
+                        <pre>{{ details }}</pre>
+                    </div>
+                    <!-- Success callout -->
+                    <div class="callout callout-info" ng-if="success">
+                        <button type="button" class="close" onclick="$('.callout').fadeOut(2000)">×</button>
+                        <h4>Sign In Successful</h4>
+                        <p>{{ success }}</p>
+                        <pre>{{ details }}</pre>
                     </div>
 
                     <div class=" input-group">
@@ -21,8 +24,8 @@
                         <input type="text"
                                class="form-control"
                                id="_username"
-                               name="_username"
-                               placeholder="Usuario o Correo"
+                               ng-model="username"
+                               placeholder="Email"
                                required autofocus>
                     </div>
                     <br/>
@@ -31,17 +34,19 @@
                         <input type="password"
                                class="form-control"
                                id="_password"
-                               name="_password"
-                               placeholder="Clave"
+                               ng-model="password"
+                               placeholder="Password"
                                required>
                     </div>
                     <label class="checkbox">
                         <input type="checkbox"
                                id="recordarme"
-                               name="recordarme" value=1 > Mantenerme conectado
+                               ng-model="rememberme" 
+                               ng-true-value="true" 
+                               ng-false-value="false"> Rememberme
                     </label>
                     <div>
-                        <button class="btn btn-large btn-primary" type="submit">Iniciar sesión</button>
+                        <button class="btn btn-large btn-primary" type="submit">Sign In</button>
                     </div>
                 </form>
             </div>

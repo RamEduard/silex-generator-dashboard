@@ -90,7 +90,7 @@ return array(
         'params'       => array(
             'charset'  => 'utf8',
             'driver'   => 'pdo_mysql',
-            'dbname'   => 'secanew',
+            'dbname'   => 'silex_gd',
             'host'     => 'localhost',
             'user'     => 'root',
             'password' => '',

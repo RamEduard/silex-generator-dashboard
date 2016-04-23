@@ -37,7 +37,7 @@ class App extends SilexApplication
             new GeneratorModule\GeneratorModule(),
             new FrontendModule\FrontendModule(),
             new AngularJSModule\AngularJSModule(),
-            // new APIModule\APIModule()
+            new APIModule\APIModule()
         );
     }
     

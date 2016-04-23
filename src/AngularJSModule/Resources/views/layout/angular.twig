@@ -1,5 +1,10 @@
 {% extends "layout.twig" %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ app.modules_path }}/angularjs/css/styles.css">
+{% endblock %}
+
 {% block title %}Angular JS{% endblock %}
 
 {% block html_params %}ng-app="app"{% endblock %}

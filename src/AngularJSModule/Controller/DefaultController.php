@@ -28,4 +28,38 @@ class DefaultController
         return $app['twig']->render('default/index.twig', array());
     }
     
+    /**
+     * Index action
+     * 
+     * @param App $app
+     * @return JsonResponse
+     */
+    function basicAuth(App $app)
+    {
+        $valid_passwords = array (
+            "admin@example.com" => "admin",
+            "user@example.com"  => "user"
+        );
+        $valid_users = array_keys($valid_passwords);
+
+        $email = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
+        $pass = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
+
+        $validated = (in_array($email, $valid_users)) && ($pass == $valid_passwords[$email]);
+
+        if (!$validated) {
+            $response = new JsonResponse(array('error' => 'Not Authorized'), 401);
+            $response->headers->set('WWW-Authenticate', 'Basic realm="Angular JS Realm"');
+        } else {
+            $response = new JsonResponse(array(
+                'response' => 'Authorized',
+                'user'     => array(
+                    'email' => $email,
+                    'pass'  => $pass
+                )
+            ));
+        }
+        
+        return $response;
+    }
 }

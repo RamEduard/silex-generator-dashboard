@@ -46,7 +46,7 @@ class __CLASSNAME__Controller
             $response = new JsonResponse('Not Authorized', 401);
             $response->headers->set('WWW-Authenticate', 'Basic realm="My Realm"');
         } else {
-            $response = new JsonResponse(array('response' => 'Authorized'), 401);
+            $response = new JsonResponse(array('response' => 'Authorized'));
         }
         
         return $response;

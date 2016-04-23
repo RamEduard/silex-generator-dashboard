@@ -31,5 +31,10 @@
         "psr-0": {
             "": "src/"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "app/console app:assets:install --symlinks"
+        ]
     }
 }

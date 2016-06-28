@@ -68,11 +68,11 @@ class DoctrineServiceProvider implements ServiceProviderInterface
             }
 
             if ($options['etities_type'] == 'annotations') {
-                $config = Setup::createAnnotationMetadataConfiguration($options['path_entities'], $options['dev_mode'], $options['proxy_dir']);
+                $config = Setup::createAnnotationMetadataConfiguration($options['path_entities'], $options['dev_mode'], $options['proxy_dir'], null, false);
             } elseif ($options['etities_type'] == 'yaml' || $options['etities_type'] == 'yml') {
-                $config = Setup::createYAMLMetadataConfiguration($options['path_entities'], $options['dev_mode'], $options['proxy_dir']);
+                $config = Setup::createYAMLMetadataConfiguration($options['path_entities'], $options['dev_mode'], $options['proxy_dir'], null, false);
             } elseif ($options['etities_type'] == 'xml') {
-                $config = Setup::createXMLMetadataConfiguration($options['path_entities'], $options['dev_mode'], $options['proxy_dir']);
+                $config = Setup::createXMLMetadataConfiguration($options['path_entities'], $options['dev_mode'], $options['proxy_dir'], null, false);
             }
 
             if (isset($app['db'])) {
